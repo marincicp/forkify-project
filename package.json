@@ -1,0 +1,19 @@
+{
+  "name": "froky",
+  "version": "1.0.0",
+  "description": "recipe app",
+  "main": "controller.js",
+  "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html"
+  },
+  "author": "petar",
+  "license": "ISC",
+  "devDependencies": {
+    "@parcel/transformer-sass": "^2.6.2",
+    "parcel": "^2.6.2"
+  },
+  "dependencies": {
+    "fractional": "^1.0.0"
+  }
+}
