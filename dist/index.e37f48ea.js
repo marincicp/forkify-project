@@ -551,6 +551,7 @@ const controlRecipe = async function() {
         if (!id) return;
         (0, _recipeViewJsDefault.default).renderSpinner();
         (0, _resultsViewJsDefault.default).update(_modelJs.getSearchResultsPage());
+        // bookmarkView.update(model.state.bookmarks);
         // load recipe
         await _modelJs.loadRecipe(id);
         // render recipe
@@ -569,7 +570,7 @@ const controlSearchRecipe = async function(query) {
         (0, _resultsViewJsDefault.default).render(_modelJs.getSearchResultsPage());
         (0, _paginationViewJsDefault.default).render(_modelJs.state.search);
     } catch (err) {
-        (0, _resultsViewJsDefault.default).renderError();
+        (0, _resultsViewJsDefault.default).errorHandler();
     }
 };
 const controlPagination = function(goToPage) {
@@ -580,6 +581,7 @@ const controlServings = function(newServings) {
     _modelJs.updateServings(newServings);
     // render recipe
     //recipeView.render(model.state.recipe);
+    // update recipe
     (0, _recipeViewJsDefault.default).update(_modelJs.state.recipe);
 };
 const controlAddBookmark = function() {
@@ -587,7 +589,6 @@ const controlAddBookmark = function() {
     else _modelJs.deleteBookmarks(_modelJs.state.recipe.id);
     (0, _recipeViewJsDefault.default).update(_modelJs.state.recipe);
     (0, _bookmarkViewJsDefault.default).render(_modelJs.state.bookmarks);
-    console.log(_modelJs.state.bookmarks);
 };
 const init = function() {
     (0, _recipeViewJsDefault.default).addEventhandlers(controlRecipe);
@@ -644,7 +645,6 @@ const loadSearchRecipe = async function(query) {
     try {
         state.search.query = query;
         const data = await (0, _helperJs.getJSON)(`${(0, _configJs.API_URL)}?search=${query}`);
-        console.log(data);
         state.search.results = data.data.recipes.map((rec)=>{
             return {
                 id: rec.id,
@@ -895,7 +895,6 @@ class View {
             if (!newEl.isEqualNode(curEl) && newEl.firstChild?.nodeValue.trim() !== "") curEl.textContent = newEl.textContent;
             if (!newEl.isEqualNode(curEl)) Array.from(newEl.attributes).forEach((attr)=>{
                 curEl.setAttribute(attr.name, attr.value);
-                console.log(attr.value);
             });
         });
     }
@@ -909,7 +908,7 @@ class View {
         this._parentEl.innerHTML = "";
         this._parentEl.insertAdjacentHTML("afterbegin", markup);
     }
-    renderError(message = this._errorMessage) {
+    errorHandler(message = this._errorMessage) {
         const markup = `
 
 <div class="error">
@@ -1296,9 +1295,6 @@ class PaginationView extends (0, _viewDefault.default) {
     _generateMarkup() {
         const curPage = this._data.page;
         const numPages = Math.ceil(this._data.results.length / this._data.resultsPerPage);
-        console.log(numPages);
-        console.log(this._data);
-        console.log(curPage);
         // Page 1, + other pages
         if (curPage === 1 && numPages > 1) return `
       <button data-goto="${curPage + 1}" class="btn--inline pagination__btn--next">
@@ -1347,6 +1343,7 @@ var _iconsSvg = require("../../img/icons.svg");
 var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
 class BookmarkView extends (0, _viewDefault.default) {
     _parentEl = document.querySelector(".bookmarks__list");
+    _errorMessage = "No bookmarks yet !";
     _generateMarkup() {
         return this._data.map(this._generateMarkupPreview).join(" ");
     }

@@ -34,7 +34,6 @@ export default class View {
       if (!newEl.isEqualNode(curEl)) {
         Array.from(newEl.attributes).forEach(attr => {
           curEl.setAttribute(attr.name, attr.value);
-          console.log(attr.value);
         });
       }
     });
@@ -50,7 +49,7 @@ export default class View {
     this._parentEl.innerHTML = '';
     this._parentEl.insertAdjacentHTML('afterbegin', markup);
   }
-  renderError(message = this._errorMessage) {
+  errorHandler(message = this._errorMessage) {
     const markup = `
 
 <div class="error">
